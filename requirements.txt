@@ -1,0 +1,16 @@
+# Web Framework y Servidor
+fastapi
+uvicorn
+httpx
+pydantic
+postgrest
+
+# Inteligencia Artificial
+google-genai
+
+# Base de Datos y Backend
+supabase
+python-dotenv
+
+# Utilidades de Tiempo y Fecha
+pytz
