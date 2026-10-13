@@ -91,10 +91,11 @@ Se decide **reducir el enfoque a un solo nicho**: negocios de comida, con entreg
 - *CA1: Cuando el dueño añade un artículo, el sistema debe pedirle que seleccione los locales que lo recibirán.*
 - *CA2: Donde el dueño no selecciona ningún local, el sistema debe conservar el artículo solo en el menú base.*
 
-**RF-12.** El sistema debe permitir al dueño del negocio **eliminar un artículo**, seleccionando en una lista **qué locales lo conservan**.
-- *CA1: Cuando el dueño elimina un artículo, el sistema debe mostrarle la lista de sus locales para que elija cuáles lo conservan.*
+**RF-12.** El sistema debe permitir al dueño del negocio **retirar un artículo de los locales que elija**, seleccionando en una lista **qué locales lo conservan**. El artículo **se queda en el menú base**.
+- *CA1: Cuando el dueño retira un artículo, el sistema debe mostrarle la lista de sus locales para que elija cuáles lo conservan.*
 - *CA2: Donde un local no fue seleccionado, el sistema debe retirarle ese artículo.*
 - *CA3: Donde un local fue seleccionado, el sistema debe conservarle el artículo sin importar que tenga versión propia.*
+- *CA4: Donde todos los locales fueron deseleccionados, el sistema debe conservar el artículo en el menú base para poder volver a aplicarlo.*
 
 ### 4.4 Ingredientes, extras y relaciones
 
@@ -227,8 +228,8 @@ Se decide **reducir el enfoque a un solo nicho**: negocios de comida, con entreg
 | CL-7 | Borrar artículo usado como extra en otros platos | Se borra y se limpian las relaciones avisando (RF-16) |
 | CL-8 | Intentar que un extra tenga sus propios extras | Impedido: un solo nivel (RF-14) |
 | CL-9 | Declarar un ingrediente que ya existe | Se reutiliza, no se duplica (RF-15) |
-| CL-10 | Negocio elimina un plato y no elige locales | Se retira de todos los locales; queda en el menú base (RF-12) |
-| CL-11 | Negocio elimina un plato y marca dos locales para conservarlo | Solo esos dos lo conservan; el resto lo pierde (RF-12) |
+| CL-10 | Retira un plato de todos sus locales | Se retira de todos, pero **se queda en el menú base** para poder volver a aplicarlo (RF-12) |
+| CL-11 | Retira un plato y marca dos locales para conservarlo | Solo esos dos lo conservan; el resto lo pierde (RF-12) |
 | CL-12 | Local con plato descartado y el negocio actualiza ese plato | Se conserva descartado; el cambio no lo repone (RF-21) |
 | CL-13 | Local que edita un artículo modificado después por el negocio | Se conserva la versión del local; no se pisa (RF-21) |
 | CL-14 | Dos locales con versiones distintas del mismo artículo | Ambas conviven, separadas por local (RF-20) |
