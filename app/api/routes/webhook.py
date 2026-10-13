@@ -2,7 +2,7 @@ import os
 import logging
 from fastapi.responses import PlainTextResponse
 from fastapi import HTTPException, Request, Query, BackgroundTasks, APIRouter
-from app.workers.proccessor import set_backgroung_task
+from app.workers.proccessor import set_background_task
 
 logging.basicConfig(level=logging.INFO)
 logger=logging.getLogger(__name__)
@@ -15,7 +15,7 @@ async def verify_webhook(
     token: str = Query(None, alias="hub.verify_token"),
     challenge: str = Query(None, alias="hub.challenge")
 ):
-    print(f"Connecting webhook")
+    print("Connecting webhook")
     if mode == "subscribe" and token == os.getenv("TOKEN_WEBHOOK"):
         return PlainTextResponse(content=challenge)
     else:
@@ -25,7 +25,7 @@ async def verify_webhook(
 async def talk_with_whatsapp(request:Request ,background_task: BackgroundTasks):
 
     data = await request.json()
-    print(f"Json recibido")
+    print("Json recibido")
 
     try:
         entry = data.get("entry", [{}])[0]
@@ -46,19 +46,19 @@ async def talk_with_whatsapp(request:Request ,background_task: BackgroundTasks):
         message_id=message_data["id"]
         message_type=message_data["type"]
 
-        print(f"Datos obtenidos")
+        print("Datos obtenidos")
 
         if message_type == "text":
             user_message= message_data["text"]["body"]
-            print(f"Ejecutando en back")
-            background_task.add_task(set_backgroung_task, phone_id, phone_number, message_id, user_name, user_message)
+            print("Ejecutando en back")
+            background_task.add_task(set_background_task, phone_id, phone_number, message_id, user_name, user_message)
         else:
-
             audio_id=message_data["audio"]["id"]
-            print(f"Ejecutando en back")
-            background_task.add_task(set_backgroung_task, phone_id, phone_number, message_id, user_name, None, audio_id)
+            print("Ejecutando en back")
+            background_task.add_task(set_background_task, phone_id, phone_number, message_id, user_name, None, audio_id)
         
 
         return {"status":"ok"}
     except Exception as e:
         print(f"Error: {type(e).__name__} - {e}")
+        return {"status": "error", "detail": f"{type(e).__name__}: {e}"}

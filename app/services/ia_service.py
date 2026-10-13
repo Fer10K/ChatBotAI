@@ -1,15 +1,13 @@
-from dotenv import load_dotenv
-import copy
-from schemas.schemas import APPOINTMENT_TEMPLATE
 from google import genai
 from google.genai import types
 import json
-import copy
 import logging
 from datetime import datetime
 import pytz
-import typing_extensions as typing
-from schemas.response_schema import SERVICE_SCHEMA
+import copy
+from app.schemas.schemas import APPOINTMENT_TEMPLATE
+from app.schemas.response_schema import SERVICE_SCHEMA
+from dotenv import load_dotenv
 
 logging.basicConfig(level=logging.INFO)
 logger=logging.getLogger(__name__)
@@ -94,22 +92,28 @@ async def get_response_for_text(loaded_metadata, system_prompt: str, user_messag
 
 
 
-async def get_response_for_audio(audio_bytes: bytes, system_prompt: str, history: list = None):
+def format_history(history: list) -> list:
     formated_history=[]
-    
-    """
     if history:
-        formated_history= format_history(history)
+        for msg in history:
+            role = "user" if msg['sender'] == "user" else "model"
+            formated_history.append({"role": role, "parts": [{"text": msg['text']}]})
+    return formated_history
 
-    system_prompt=f{system_prompt} Instrucciones adicionales: En el campo 'respuesta', redacta el mensaje que el usuario leerá en su chat. Usa emojis y un tono cercano.
-                                    En el campo 'transcripcion_usuario', escribe el texto exacto (o un resumen muy fiel) de lo que el usuario dijo 
+
+async def get_response_for_audio(audio_bytes: bytes, system_prompt: str, history: list = None):
+    formated_history= format_history(history)
+
+    system_prompt=f"""{system_prompt}
+                                    Instrucciones adicionales: En el campo 'respuesta', redacta el mensaje que el usuario leerá en su chat. Usa emojis y un tono cercano.
+                                    En el campo 'transcripcion_usuario', escribe el texto exacto (o un resumen muy fiel) de lo que el usuario dijo
                                     en el mensaje de audio.
                                     En el campo 'fecha_cita', escribe la fecha en formato YYYY-MM-DD si el usuario solicita una, de lo contrario escribe 'none'.
                                     [CONTEXTO TEMPORAL CRÍTICO]
                                     Fecha y hora actual: {get_contexto_temporal()}
-                                    Regla: No puedes agendar citas en fechas pasadas. 
+                                    Regla: No puedes agendar citas en fechas pasadas.
                                     Si el usuario lo intenta, indícale la fecha actual y pide una nueva.
-                                    
+    """
     try:
         ai_response=client.models.generate_content(
             model="gemini-2.5-flash",
@@ -126,11 +130,11 @@ async def get_response_for_audio(audio_bytes: bytes, system_prompt: str, history
                 }),
             contents=[
                 *formated_history,
-                types.Part.from_bytes(data=audio_bytes, mime_type="audio/ogg")
+                {"role": "user", "parts": [types.Part.from_bytes(data=audio_bytes, mime_type="audio/ogg")]}
             ]
         )
 
         data=json.loads(ai_response.text)
         return data
     except Exception as e:
-        raise RuntimeError(f"Back: Fail on AI audio service: {e}")"""
+        raise RuntimeError(f"Back: Fail on AI audio service: {e}")

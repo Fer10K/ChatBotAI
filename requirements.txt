@@ -14,3 +14,5 @@ python-dotenv
 
 # Utilidades de Tiempo y Fecha
 pytz
+langchain-core>=0.1.0
+langchain-google-genai>=1.0.0

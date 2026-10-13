@@ -7,7 +7,7 @@ router = APIRouter()
 async def get_bots_credentials(phone_id: str):
     res = await get_bot_credentials(phone_id)
     if res:
-        return {"bot_id": res.bot_id, "whatsapp_token": res.access_token}
+        return {"bot_id": res["id"], "whatsapp_token": res["access_token"]}
     else:
         raise HTTPException(status_code=404, detail="Bot no encontrado")
 
@@ -15,7 +15,7 @@ async def get_bots_credentials(phone_id: str):
 async def get_bots_data(bot_id):
     res = await get_bot_data(bot_id)
     if res:
-        return {"system_prompt": res.system_prompt, "service_type": res.service_type}
+        return {"system_prompt": res["system_prompt"], "service_type": res["service_type"]}
     else:
         return {"system_prompt": None, "service_type": None}
     

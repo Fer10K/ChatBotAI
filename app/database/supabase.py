@@ -1,8 +1,10 @@
 import os
 import logging
-from langchain_core.messages import AIMessage, HumanMessage
 from supabase import create_client
-from datetime import datetime, timezone, timedelta, date
+from datetime import datetime, timezone, timedelta
+from dotenv import load_dotenv
+
+load_dotenv()
 
 logging.basicConfig(level=logging.INFO)
 logger=logging.getLogger(__name__)
@@ -29,7 +31,7 @@ async def get_set_sesion(bot_id: str, phone_num: str):
             saved_date = datetime.strptime(saved_date_str, "%Y-%m-%d").date()
             if saved_date < datetime.now().date():
                 print("Error, Plantilla caducada (2/2)")
-                None
+                return None
         return metadata
     return None
 
@@ -50,7 +52,7 @@ async def update_sesion(bot_id: str, num_phone: str, metadata):
 
 
 
-def get_bot_credentials(phone_id):
+async def get_bot_credentials(phone_id):
     res = supabase.table("bots").select("id, access_token").eq("phone_id", phone_id).execute()
 
     return res.data[0] if res.data else None
@@ -111,11 +113,9 @@ async def get_history(bot_id: str, phone_number: str):
         history=[]
 
         for msg in reversed(res.data):
-            if msg['role'] == 'user':
-                history.append[HumanMessage(content=msg['content'])]
-            else:
-                history.append[AIMessage(content=msg['content'])]
-                
+            history.append({"sender": msg['role'], "text": msg['content']})
+
         return history
     except Exception as e:
         logger.error(f"Back: error getting history: {e}")
+        return []

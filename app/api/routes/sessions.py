@@ -1,5 +1,4 @@
 from fastapi import APIRouter, Depends, HTTPException
-from google.genai.types import VertexAISearchDict
 from app.database.supabase import get_set_sesion, update_sesion, get_history
 from app.api.auth.security_api import verificar_api_key
 
@@ -25,4 +24,4 @@ async def modify_session_template(bot_id: str, phone_number: str, metadata: dict
 @router.get("/history", dependencies=[Depends(verificar_api_key)])
 async def get_db_history(bot_id: str, phone_number: str):
     res= await get_history(bot_id, phone_number)
-    return
+    return res
