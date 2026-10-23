@@ -18,3 +18,6 @@ __pycache__/
 .db
 .log
 
+# Memoria de sesión del agente (estado efímero, no se versiona)
+MEMORY.md
+
